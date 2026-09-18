@@ -14,8 +14,10 @@ instruct the user to update pyproject.toml manually.
 - Tables, diagrams, or charts that are part of the lecture should be shown in markdown cells or raw cells, whichever suits best. Do not ask the user to run a code cell just to see a diagram, chart, or table of a lecture. Tables, diagrams, or chart output via code cell execution is permitted as an output of a sample code.
 - Check for JSON parsing errors after each change to rag_tutorial.ipynb with: `python -m json.tool rag_tutorial.ipynb`
 - **CRITICAL: The user must be able to run sample codes that are OpenAI or Ollama compatible.**
+- **CRITICAL: All modules share the same puproject.toml file. When updating the pyproject.toml file, make sure that dependencies of other modules are not affected.***
+- **CRITICAL: When working on a module, do not make changes to other modules unless instructed to do so.**
 - **CRITICAL: Maintain valid JSON structure in Jupyter notebooks** - every string must end with `,` except the last one in an array, and all JSON objects must have proper comma separation
-- **Always use UTF-8 encoding** when reading or writing files to prevent character encoding issues
+- **CRITICAL: Always use UTF-8 encoding** when reading or writing files to prevent character encoding issues
 - When running Python scripts, ensure you specify `encoding='utf-8'` in file open operations
 - Keep all notebook files as UTF-8 encoded JSON
 - Environment variables should be set in the `.env` file using UTF-8 encoding
