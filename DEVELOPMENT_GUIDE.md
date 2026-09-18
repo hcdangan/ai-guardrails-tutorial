@@ -2,9 +2,9 @@
 This is an interactive Jupyter Notebook that serves as a tutorial on Retrieval-Augmented Generation (RAG).
 
 ## Important Notes
-- The main tutorial file is ai-guardrails-tutorial.ipynb
 - The format should be similar to an online e-learning module with runnable samples in Jupyter code cells. 
-- Never install packages. Update the pyproject.toml file instead and run "uv sync".
+- Never install packages. Update the pyproject.toml file instead and run "uv sync". In any of the modules, never
+instruct the user to update pyproject.toml manually.
 - Do not create any other external python (.py) files unless they are just temporary scripts.
 - All sample code should be in a Jupyter Notebook code cell so that the user can run it interactively. Only sample code to demonstrate the concepts should be created. Code to setup or prepare or initialize the sample code is also okay.
 - Facilitate the learning process by adding snippets of runnable python code in code cells. Include explanations as comments in the code and print statements for demonstration.
@@ -19,7 +19,7 @@ This is an interactive Jupyter Notebook that serves as a tutorial on Retrieval-A
 - When running Python scripts, ensure you specify `encoding='utf-8'` in file open operations
 - Keep all notebook files as UTF-8 encoded JSON
 - Environment variables should be set in the `.env` file using UTF-8 encoding
-- Generate one module at a time upon my request or approval.
+- Generate one module at a time upon my request or approval. Each module should be a separate Jupyter notebook.
 
 ## Environment Variables
 
@@ -29,6 +29,7 @@ EMBEDDING_MODEL
 API_KEY
 
 ## Interactive Notebook Course Outline: Implementing AI Guardrails
+**CRITICAL: Do not make changes to the course outline without approval**
 
 ### Module 1: Introduction to AI Vulnerabilities & OWASP Top 10 for LLMs
 * 1.1 Conceptual Overview: The Risks of Unconstrained LLMs
@@ -37,7 +38,7 @@ API_KEY
   * Runnable Code: Set up a vulnerable pydantic_ai agent and execute a basic indirect prompt injection attack.
   * Runnable Code: View how malicious system instructions can override default application behavior.
 
-### Module 2: Introduction to Guardrails AI & The Hub
+### Module 2: Introduction to Guardrails AI
 * 2.1 Architectural Concepts: Validators, Guards, and Rails
   * Understanding the Guardrails AI ecosystem and why runtime validation is necessary.
 * 2.2 Environment Setup & Initialization
