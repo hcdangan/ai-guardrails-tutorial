@@ -9,6 +9,7 @@ authors = [
 requires-python = ">=3.14"
 dependencies = [
     "pydantic-ai",
+    "guardrails-ai",
 ]
 
 [project.scripts]

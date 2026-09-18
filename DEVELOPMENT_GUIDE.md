@@ -29,6 +29,8 @@ BASE_URL
 LLM_MODEL
 EMBEDDING_MODEL
 API_KEY
+USE_OLLAMA
+DEBUG_MODE
 
 ## Interactive Notebook Course Outline: Implementing AI Guardrails
 **CRITICAL: Do not make changes to the course outline without approval**
