@@ -1,5 +1,5 @@
 # Development Guide
-This is an interactive Jupyter Notebook that serves as a tutorial on Retrieval-Augmented Generation (RAG).
+This is an interactive Jupyter Notebook that serves as a tutorial on Implementing AI Guardrails.
 
 ## Important Notes
 - The format should be similar to an online e-learning module with runnable samples in Jupyter code cells. 
