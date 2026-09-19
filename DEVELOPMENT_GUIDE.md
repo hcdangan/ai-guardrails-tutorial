@@ -71,3 +71,49 @@ DEBUG_MODE
 * 5.2 Resiliency Testing
   * Runnable Code: Running a continuous test loop feeding a mix of safe, toxic, and malicious prompts to observe real-time error handling, validation logs, and fallback triggers.
 
+## === AUTOMATIC CLEANUP & SAFETY RULES (MUST FOLLOW) ===
+# =============================================================================
+# THESE RULES MUST BE FOLLOWED TO PREVENT MISSED FILES AND DATA LOSS
+
+## RULE #1: WORK IN ORIGINAL FILE FIRST - TEST BEFORE REPLACING
+# Before making ANY changes to a notebook (.ipynb):
+# 1. READ the current contents using: read file_path
+# 2. VERIFY you understand the complete structure and all cells
+# 3. Make small, TARGETED edits using the edit tool (never replace entire files)
+# 4. VERIFY edits are valid JSON: python -m json.tool module_*.ipynb
+# 5. ONLY THEN apply changes - keep the original safe until verified
+
+## RULE #2: NO TEMPORARY FILES IN FINAL OUTPUT - CLEAN UP IMMEDIATELY
+# The following are ALLEGED TEMPORARY FILES that MUST BE DELETED:
+# - *.corrected, *.fixed, *.backup - backup test files
+# - test_*.py, _test_*.py - standalone test scripts (unless explicitly requested)
+# - *.tmp, *.temp, *.scratch - any temporary helper files
+# - module_*.fixed, module_*.corrected - notebook backups
+# Action: These must be deleted AFTER every task completion
+# Clean command: Remove-Item -Path "*.corrected" "*.fixed" "*.backup" "*.tmp" "*.temp" "test_*.py" module_*.fixed -Force
+
+## RULE #3: ALWAYS VERIFY JSON VALIDITY AFTER NOTEBOOK EDITS
+# After ANY notebook change:
+# python -m json.tool module_2.ipynb
+# Should output "Expecting value: line 1 column 1 (char 0)" for empty or valid JSON
+# OR exit code 0 for valid JSON
+# If invalid: fix the JSON BEFORE continuing
+
+## RULE #4: EDIT SMALLER CHUNKS - ONE CELL AT A TIME
+# When modifying notebooks:
+# - Edit ONE cell at a time, not multiple
+# - When using edit tool: keep old_string EXACT (read file FIRST)
+# - Don't replace entire files with write unless absolutely necessary
+# - Use edit tool for targeted changes OVER write tool
+
+## RULE #5: BACKUPS ARE TEMPORARY AND MUST BE CLEANED EVERY SESSION
+# If you create a backup during troubleshooting:
+# 1. Complete the fix in the ORIGINAL file first
+# 2. NEVER leave backup files in the directory
+# 3. Run cleanup AFTER EVERY session ends
+
+# =============================================================================
+## CLEANUP COMMAND (RUN AT END OF EVERY TASK):
+# Remove-Item -Path "*.corrected" "*.fixed" "*.backup" "*.tmp" "*.temp" "test_*.py" -Force 2>$null
+# Verify notebooks load: python -c "import json; [json.load(open(f)) for f in (\\'.*\\.ipynb\\' if \\'.*\\.ipynb\\' else \\'.*)\'])" 2>$null
+# =============================================================================
