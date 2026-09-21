@@ -2,6 +2,7 @@
 This is an interactive Jupyter Notebook that serves as a tutorial on Implementing AI Guardrails.
 
 ## Important Notes
+- Use skills in the skill catalog section.
 - The format should be similar to an online e-learning module with runnable samples in Jupyter code cells. 
 - Never install packages. Update the pyproject.toml file instead and run "uv sync". In any of the modules, never
 instruct the user to update pyproject.toml manually.
@@ -31,6 +32,35 @@ EMBEDDING_MODEL
 API_KEY
 USE_OLLAMA
 DEBUG_MODE
+
+## Skill Catalog
+Skills are pre-packaged capabilities available to the agent working on this project. Load one with the `skill` tool, using the exact skill name, before acting on a matching task. This catalog lists skills that support *building* the tutorial; it is not part of the course content.
+
+### `agent-reach` — Internet Research and Content Retrieval
+
+**Purpose:** Read access to the live internet across 16 platforms — any web page, Exa semantic search, YouTube, GitHub, RSS, V2EX, Bilibili, Twitter/X, Reddit, Facebook, Instagram, LinkedIn, 小宇宙播客, 雪球, 小红书, and Boss直聘.
+
+**When to use it:**
+- Researching lesson material: OWASP Top 10 for LLMs, prompt injection techniques, guardrail design patterns.
+- Knowing how to use the Guardrails AI library from this website: https://guardrailsai.com/hub
+- Verifying current `guardrails-ai` / `pydantic_ai` APIs, `hub://guardrails/...` validator names, and version changes *before* writing sample code into a module.
+- Checking how the community currently solves a problem a module covers.
+
+**When NOT to use it:**
+- **Never** as a source of project dependencies, and never to install anything into this project — see "Never install packages" in Important Notes.
+- Read-only retrieval only. Do not post, comment, like, or otherwise write to any platform.
+- Not for content authoring (writing lessons, analysis, translation) — it only fetches source material.
+
+**Status on this machine:** `agent-reach` v1.5.0 installed and already available to the agent. 5/16 channels active. Working now: Web (Jina Reader), Exa semantic search, YouTube, GitHub, RSS, V2EX, Bilibili search. The credential-based channels (Twitter/X, Reddit, Facebook, Instagram, 小红书, 雪球, LinkedIn, 小宇宙, Boss直聘) are **not** configured — ask the user before attempting to add them.
+
+**Health check:**
+```powershell
+agent-reach doctor --json
+```
+
+**Notes:**
+- Agent Reach is **agent tooling, not a project dependency**. Never add it to `pyproject.toml` and never install it via `uv sync`; that rule governs the tutorial's own Python packages only.
+- Full command reference: `~/.agents/skills/agent-reach/SKILL.md`, plus `references/*.md` for per-platform details.
 
 ## Interactive Notebook Course Outline: Implementing AI Guardrails
 **CRITICAL: Do not make changes to the course outline without approval**
