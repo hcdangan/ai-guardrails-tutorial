@@ -11,6 +11,11 @@ dependencies = [
     "pydantic-ai",
     "guardrails-ai",
     "guardrails-ai-detect-pii>=0.0.6",
+    "python-dotenv",
+    # DetectPII loads this spaCy model on construction. Declaring it keeps the
+    # install deterministic - otherwise uv sync removes it and the first
+    # DetectPII call silently re-downloads ~380 MB from GitHub at runtime.
+    "en-core-web-lg @ https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.8.0/en_core_web_lg-3.8.0-py3-none-any.whl",
 ]
 
 [project.scripts]
