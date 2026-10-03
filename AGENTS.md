@@ -15,7 +15,7 @@ instruct the user to update pyproject.toml manually.
 - Tables, diagrams, or charts that are part of the lecture should be shown in markdown cells or raw cells, whichever suits best. Do not ask the user to run a code cell just to see a diagram, chart, or table of a lecture. Tables, diagrams, or chart output via code cell execution is permitted as an output of a sample code.
 - Check for JSON parsing errors after each change to rag_tutorial.ipynb with: `python -m json.tool rag_tutorial.ipynb`
 - **CRITICAL: The user must be able to run sample codes that are OpenAI or Ollama compatible.**
-- **CRITICAL: All modules share the same puproject.toml file. When updating the pyproject.toml file, make sure that dependencies of other modules are not affected.***
+- **CRITICAL: All modules share the same pyproject.toml file. When updating the pyproject.toml file, make sure that dependencies of other modules are not affected.***
 - **CRITICAL: When working on a module, do not make changes to other modules unless instructed to do so.**
 - **CRITICAL: Maintain valid JSON structure in Jupyter notebooks** - every string must end with `,` except the last one in an array, and all JSON objects must have proper comma separation
 - **CRITICAL: Always use UTF-8 encoding** when reading or writing files to prevent character encoding issues
@@ -65,41 +65,83 @@ agent-reach doctor --json
 ## Interactive Notebook Course Outline: Implementing AI Guardrails
 **CRITICAL: Do not make changes to the course outline without approval**
 
+### Outline Conventions (apply to every module)
+- **Learning objectives:** Every module states explicit "By the end of this module you can..." objectives. These are shown as a markdown cell at the top of the notebook and are written as testable outcomes.
+- **Validator availability:** Always verify a Hub validator actually resolves in *this* project's environment before writing it into a lesson. The `hub://guardrails/...` private registry is retired in `guardrails-ai` 0.11 — see 2.2. Where a validator is unavailable, teach the concept with a custom validator built in the notebook.
+- **Required dependencies:** `guardrails-ai` and `guardrails-ai-detect-pii` are managed in `pyproject.toml`. No module may install packages at runtime.
+
 ### Module 1: Introduction to AI Vulnerabilities & OWASP Top 10 for LLMs
+**Objectives:** Explain the LLM-specific risks in the OWASP Top 10 for LLM Applications (2025); run an indirect prompt injection against an unguarded agent and describe why it succeeded; map a running application to at least three OWASP LLM categories.
+
 * 1.1 Conceptual Overview: The Risks of Unconstrained LLMs
   * Core vulnerabilities: Prompt Injection, Insecure Output Handling, and Data Leakage.
+  * The OWASP Top 10 for LLM Applications (2025) as the organizing taxonomy: LLM01 Prompt Injection, LLM02 Sensitive Information Disclosure, LLM03 Supply Chain, LLM04 Data and Model Poisoning, LLM05 Improper Output Handling, LLM06 Excessive Agency, LLM07 System Prompt Leakage, LLM08 Vector and Embedding Weaknesses, LLM09 Misinformation, LLM10 Unbounded Consumption.
+  * Which of the ten are addressable with runtime guardrails and which are not — guardrails are one layer of defense, not a complete fix.
 * 1.2 Interactive Lab: Simulating an Exploit
   * Runnable Code: Set up a vulnerable pydantic_ai agent and execute a basic indirect prompt injection attack.
   * Runnable Code: View how malicious system instructions can override default application behavior.
+  * Runnable Code: Re-run the same attack with no guardrail to establish the unmitigated baseline used for comparison in later modules.
 
 ### Module 2: Introduction to Guardrails AI
+**Objectives:** Distinguish validators, guards, and rails, and say where each sits in a request lifecycle; set up the project environment via `pyproject.toml` and `uv sync` without installing anything from a notebook; write and test a custom validator using `@register_validator`.
+
 * 2.1 Architectural Concepts: Validators, Guards, and Rails
   * Understanding the Guardrails AI ecosystem and why runtime validation is necessary.
+  * The three terms defined concretely: a **Validator** checks one value, a **Guard** binds validators to an LLM call, and **Rails** are the input/output stages a Guard enforces at.
+  * Why the input rail and the output rail are different problems: the input rail inspects untrusted text before it reaches the model, the output rail inspects model-generated text before it reaches the user.
 * 2.2 Environment Setup & Initialization
-  * Runnable Code: Installing guardrails-ai and downloading specific validation packages from the Guardrails Hub.
+  * Not a lesson in package installation. Dependencies (`guardrails-ai`, `guardrails-ai-detect-pii`) live in `pyproject.toml` and are installed with `uv sync`; environment variables live in `.env`.
+  * Runnable Code: Import `Guard`, `Validator`, and `@register_validator`, confirm the installed version, and inspect where validation hooks are available.
+  * Runnable Code: Enable `DEBUG_MODE` and observe the Guardrails logging output so failures are diagnosable later.
+  * Note for the author (teaching moment, not course content): the `hub://guardrails/...` private registry is retired — `guardrails hub install` prints a deprecation notice and its registry host no longer resolves. Modern validator packages are distributed as ordinary PyPI dependencies and imported from the `guardrails_ai` namespace, e.g. `from guardrails_ai.detect_pii import DetectPII`.
 
 ### Module 3: Input Guardrails (Shielding the Model)
+**Objectives:** Build an input pre-filter that blocks adversarial prompts before they reach the LLM; scan and redact PII in inbound traffic with a real Hub validator; demonstrate at least two techniques that evade a naive filter and explain the fix.
+
 * 3.1 Detecting Prompt Injection
-  * Runnable Code: Integrating the hub://guardrails/prompt_injection validator.
-  * Runnable Code: Building an input pre-filter that blocks adversarial user prompts before they reach the LLM.
+  * Runnable Code: Building an input pre-filter that blocks adversarial user prompts before they reach the LLM, and wiring it as an input rail.
+  * Runnable Code: Building the injection detector as a custom validator. The retired `hub://guardrails/prompt_injection` validator is used as the historical reference point and as the reason a custom validator is the practical path.
+  * Runnable Code: Showing what the pre-filter costs — added latency and prompt volume per call.
 * 3.2 Preventing PII Leakage
-  * Runnable Code: Using hub://guardrails/detect_pii to scan and redact sensitive user information (SSNs, emails) in incoming traffic.
+  * Runnable Code: Using the real Hub validator `DetectPII` (`from guardrails_ai.detect_pii import DetectPII`) to scan and redact sensitive user information (SSNs, emails) in incoming traffic.
+  * Runnable Code: Evasion lab — attempt to slip PII past the detector using character insertion, unicode, and encoding tricks, then close the gaps. Regex-based detection is deliberately imperfect and the lesson is to measure the bypass rate, not assume zero.
+  * Runnable Code: Handling a false positive, including the fail-open versus fail-closed decision for an input rail.
 
 ### Module 4: Output Guardrails (Validating Model Responses)
+**Objectives:** Force schema compliance with automatic re-asking on failure; moderate toxic output; ground a response in supplied context; detect and redact secrets, PII, and system-prompt leakage in outbound text.
+
 * 4.1 Structural Integrity & JSON Validation
   * Runnable Code: Defining rigid data structures using Pydantic models.
   * Runnable Code: Wrapping the LLM call in a Guardrails wrapper to force schema compliance and trigger automatic re-asking on failure.
+  * Runnable Code: Observing what re-asking does to cost and latency, and deciding when a bounded retry count should give up.
 * 4.2 Content Moderation & Toxic Output Prevention
-  * Runnable Code: Implementing hub://guardrails/toxic_language to catch and block abusive or offensive model generations.
-* 4.3 Halucination & Fact-Checking Controls
-  * Runnable Code: Setting up hub://guardrails/provenance_llm or similar semantic similarity metrics to ground responses within a provided text context.
+  * Runnable Code: Catching and blocking abusive or offensive model generations on the output rail.
+  * Runnable Code: Implementing the moderation validator directly and noting that the historical `hub://guardrails/toxic_language` Hub package is no longer resolvable here, so the concept is demonstrated with an available or custom validator.
+* 4.3 Hallucination & Fact-Checking Controls
+  * Runnable Code: Setting up semantic similarity metrics to ground responses within a provided text context and flag unsupported claims.
+  * Runnable Code: Implementing the check directly, noting that the historical `hub://guardrails/provenance_llm` Hub package is no longer resolvable here, so the grounding check is built from an available or custom metric.
+  * Runnable Code: Discussing how grounding is scored and why a similarity threshold is a tunable tradeoff between missed hallucinations and false accusations.
+* 4.4 Output Leakage & Secret Detection
+  * Runnable Code: Scanning model output for PII, API keys, credentials, and other secrets before the response reaches the user.
+  * Runnable Code: Detecting system-prompt leakage and validating it with a canary string planted in the system prompt.
+  * Closing the loop on Module 1: this is the outbound half of LLM02 Sensitive Information Disclosure, and it is the higher-severity direction because the model may disclose context the user never sent.
 
 ### Module 5: End-to-End Integration with Pydantic AI
+**Objectives:** Build a guarded `pydantic_ai.Agent` with input and output rails; run a mixed-traffic test loop and report real error handling and fallback behavior; explain why streaming breaks output validation and how to validate a stream; log guardrail decisions as an audit trail.
+
 * 5.1 Building a Production-Ready Guarded Agent
   * Runnable Code: Constructing a comprehensive pydantic_ai.Agent.
-  * Runnable Code: Embedding Guardrails AI seamlessly within Pydantic AI's execution pipeline using input/output decorators.
+  * Runnable Code: Embedding Guardrails AI within Pydantic AI's execution pipeline using input/output decorators.
+  * Runnable Code: Validating tool calls, since an agent that can act is where an unchecked value causes the most damage.
 * 5.2 Resiliency Testing
   * Runnable Code: Running a continuous test loop feeding a mix of safe, toxic, and malicious prompts to observe real-time error handling, validation logs, and fallback triggers.
+  * Runnable Code: Testing the guardrails themselves against evasive inputs from the 3.2 evasion lab, so the learner measures bypass rate rather than only happy-path success.
+* 5.3 Streaming & Asynchronous Validation
+  * Runnable Code: Showing why a single end-of-response validation pass does not work on a stream, and demonstrating incremental validation over chunks.
+  * Runnable Code: Handling the case where a chunk already reached the user before a later chunk failed validation.
+* 5.4 Observability & Operational Tradeoffs
+  * Runnable Code: Logging every guardrail decision (validator, verdict, latency) to produce an audit trail.
+  * Runnable Code: Measuring guardrail overhead and false-positive rate so the safety-versus-usability tradeoff is decided with numbers rather than intuition.
 
 ## === AUTOMATIC CLEANUP & SAFETY RULES (MUST FOLLOW) ===
 # =============================================================================
