@@ -11,6 +11,10 @@ dependencies = [
     "pydantic-ai",
     "guardrails-ai",
     "guardrails-ai-detect-pii>=0.0.6",
+    "guardrails-ai-toxic-language",
+    "guardrails-ai-provenance-embeddings",
+    "sentence-transformers",
+    "ipykernel",  # Kernel used to run the notebooks
 ]
 
 [project.scripts]

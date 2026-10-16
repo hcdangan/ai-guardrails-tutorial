@@ -13,7 +13,7 @@ instruct the user to update pyproject.toml manually.
 - The tutorial outline is in the "Interactive Notebook Course Outline: Implementing AI Guardrails" section below
 - Create tables, charts, or diagrams if necessary to facilitate learning. Consider these parts of the lecture or lesson material.
 - Tables, diagrams, or charts that are part of the lecture should be shown in markdown cells or raw cells, whichever suits best. Do not ask the user to run a code cell just to see a diagram, chart, or table of a lecture. Tables, diagrams, or chart output via code cell execution is permitted as an output of a sample code.
-- Check for JSON parsing errors after each change to rag_tutorial.ipynb with: `python -m json.tool rag_tutorial.ipynb`
+- Check for JSON parsing errors after each change to a notebook with: `python -m json.tool module_*.ipynb`
 - **CRITICAL: The user must be able to run sample codes that are OpenAI or Ollama compatible.**
 - **CRITICAL: All modules share the same puproject.toml file. When updating the pyproject.toml file, make sure that dependencies of other modules are not affected.***
 - **CRITICAL: When working on a module, do not make changes to other modules unless instructed to do so.**
