@@ -12,7 +12,10 @@ dependencies = [
     { name = "guardrails-ai-provenance-embeddings" },
     { name = "guardrails-ai-toxic-language" },
     { name = "ipykernel" },
+    { name = "openai" },
+    { name = "pydantic" },
     { name = "pydantic-ai" },
+    { name = "python-dotenv" },
     { name = "sentence-transformers" },
 ]
 
@@ -23,7 +26,10 @@ requires-dist = [
     { name = "guardrails-ai-provenance-embeddings" },
     { name = "guardrails-ai-toxic-language" },
     { name = "ipykernel" },
+    { name = "openai" },
+    { name = "pydantic" },
     { name = "pydantic-ai" },
+    { name = "python-dotenv" },
     { name = "sentence-transformers" },
 ]
 

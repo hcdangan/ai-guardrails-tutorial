@@ -9,6 +9,9 @@ authors = [
 requires-python = ">=3.14"
 dependencies = [
     "pydantic-ai",
+    "pydantic",
+    "openai",
+    "python-dotenv",
     "guardrails-ai",
     "guardrails-ai-detect-pii>=0.0.6",
     "guardrails-ai-toxic-language",
